@@ -1,5 +1,5 @@
-import com.gamesbykevin.maze.main.Main;
-import com.gamesbykevin.maze.shared.Shared;
+import com.gamesbykevin.jezzball.main.Main;
+import com.gamesbykevin.jezzball.shared.Shared;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;

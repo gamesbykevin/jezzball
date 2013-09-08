@@ -1,7 +1,7 @@
-import com.gamesbykevin.maze.shared.Shared;
+import com.gamesbykevin.jezzball.shared.Shared;
 import javax.swing.JApplet;
 
-import com.gamesbykevin.maze.main.Main;
+import com.gamesbykevin.jezzball.main.Main;
 
 /**
  * WE NEED THIS CLASS HERE FOR JAVA APPLETS OUTSIDE A PACKAGE SO IT CAN FIND THE STARTING POINT
