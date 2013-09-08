@@ -21,33 +21,75 @@ public class BallManager
     //cheating will be freezing the movement of the balls
     private boolean cheatEnabled = false;
     
-    //the different sizes allowed for the balls
-    private static final double[] BALL_SIZES = {8, 16, 32, 64, 128, 256};
+    //The different ball sizes and their associated value
+    public enum BallSize
+    {
+        Medium(16),
+        Large(32),
+        Small(8);
+
+        private final int size;
+
+        private BallSize(final int size) 
+        {
+            this.size = size;
+        }
+
+        public int getValue()
+        {
+            return this.size;
+        }
+    }
     
-    //the different speeds allowed for the balls
-    private static final double[] BALL_SPEED = {0, 1, 2, 3, 5, 10};
     
-    /**
-     * Create a new collection of balls within the container and of the specified dimensions
-     * @param count The number of balls we want to add
-     * @param container The container where the balls will lie within
-     * @param minSize The minimum width/height of the balls
-     * @param maxSize The maximum width/height of the balls
-     * @param image The image of the ball
-     */
-    public BallManager(final Resources resources, final Rectangle container, final int count) throws Exception
+    //The different ball speeds and their associated value
+    public enum BallSpeed
+    {
+        Medium(1.25),
+        Fast(2.5),
+        Fastest(3),
+        Slowest(.25),
+        Slow(.75);
+
+        private final double speed;
+
+        private BallSpeed(final double speed) 
+        {
+            this.speed = speed;
+        }
+
+        public double getValue()
+        {
+            return this.speed;
+        }
+    }
+    
+    public BallManager()
     {
         //create a new list of balls
         balls = new ArrayList<>();
-        
+    }
+    
+    /**
+     * Create a new list of balls each at their own random location inside the container
+     * @param resources Object that will give us a random ball image
+     * @param container Area the balls will start inside
+     * @param count The number of balls to add
+     * @throws Exception 
+     */
+    public void reset(final Rectangle container, final int count, final int sizeIndex, final int speedIndex) throws Exception
+    {
         //set the size for the balls
-        final double size = BALL_SIZES[2];
+        final double size = BallSize.values()[sizeIndex].getValue();
         
         //set the speed for the balls
-        final double speed = BALL_SPEED[2];
+        final double speed = BallSpeed.values()[speedIndex].getValue();
         
         if (speed >= size)
             throw new Exception("The speed of the balls can't be greater than the size");
+        
+        //clear list
+        balls.clear();
         
         for (int i=0; i < count; i++)
         {
@@ -72,9 +114,6 @@ public class BallManager
             //ball will have same width and height
             ball.setDimensions(size, size);
             
-            //get a random game ball image and set it
-            ball.setImage(resources.getGameBall());
-            
             //add ball to list
             balls.add(ball);
         }
@@ -83,6 +122,11 @@ public class BallManager
     public List<Ball> getBalls()
     {
         return this.balls;
+    }
+    
+    public int getCount()
+    {
+        return getBalls().size();
     }
     
     public boolean hasCheatEnabled()
@@ -95,7 +139,7 @@ public class BallManager
         this.cheatEnabled = cheatEnabled;
     }
     
-    public void update(final Board board, final Player player)
+    public void update(final Resources resources, final Board board, final Player player)
     {
         //no balls so nothing to update or the user is cheating
         if (balls == null || hasCheatEnabled())
@@ -103,6 +147,10 @@ public class BallManager
         
         for (Ball ball : balls)
         {
+            //get a random game ball image
+            if (ball.getImage() == null)
+                ball.setImage(resources.getGameBall());
+            
             //if the player is trying to capture and the ball hit the player capture boundary
             if (player.hasCapture() && player.getCaptureBoundary().intersects(ball.getRectangle()))
             {
@@ -111,6 +159,9 @@ public class BallManager
                 {
                     //lose 1 life
                     player.loseLife();
+                    
+                    //play hit sound effect
+                    resources.getGameAudio(Resources.GameAudio.Hit).play();
                 }
                 
                 //no longer capturing

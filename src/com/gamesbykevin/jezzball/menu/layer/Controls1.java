@@ -12,7 +12,7 @@ public class Controls1 extends Layer implements LayerRules
         super(Layer.Type.NONE, engine.getMain().getScreen());
         
         setImage(engine.getResources().getMenuImage(Resources.MenuImage.Controls1));
-        setNextLayer(CustomMenu.LayerKey.Controls2);
+        setNextLayer(CustomMenu.LayerKey.MainTitle);
         setForce(false);
         setPause(true);
         setTimer(null);

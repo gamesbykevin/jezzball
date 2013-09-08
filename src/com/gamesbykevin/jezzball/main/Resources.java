@@ -21,7 +21,7 @@ public class Resources
     //collections of resources
     private enum Type
     {
-        MenuImage, MenuAudio, GameFont, GameBalls, PlayerImage, GameBackgrounds
+        MenuImage, MenuAudio, GameFont, GameBalls, PlayerImage, GameBackgrounds, GameAudio
     }
     
     //root directory of all resources
@@ -40,8 +40,8 @@ public class Resources
     public enum MenuImage
     {
         TitleScreen, Credits, AppletFocus, TitleBackground, Mouse, MouseDrag, 
-        Controls1, Controls2, 
-        Instructions1, Instructions2, Instructions3
+        Controls1,  
+        Instructions1, Instructions2
     }
     
     public enum GameFont
@@ -64,6 +64,11 @@ public class Resources
         Ball20, Ball21, Ball22, Ball23
     }
     
+    public enum GameAudio
+    {
+        Hit, Fix, GameOver, Win
+    }
+    
     //indicates wether or not we are still loading resources
     private boolean loading = true;
     
@@ -75,10 +80,13 @@ public class Resources
         add(Type.PlayerImage, (Object[])PlayerImage.values(), RESOURCE_DIR + "images/game/player/{0}.png", "Loading Player Images", Manager.Type.Image);
         
         //load all game backgrounds
+        add(Type.GameAudio, (Object[])GameAudio.values(), RESOURCE_DIR + "audio/game/{0}.wav", "Loading Game Audio", Manager.Type.Audio);
+        
+        //load all game backgrounds
         add(Type.GameBackgrounds, (Object[])GameBackgrounds.values(), RESOURCE_DIR + "images/game/backgrounds/{0}.jpg", "Loading Game Backgrounds", Manager.Type.Image);
         
         //load all game balls
-        add(Type.GameBalls, (Object[])GameBalls.values(), RESOURCE_DIR + "images/game/balls/{0}.png", "Loading Game Balls", Manager.Type.Image);
+        add(Type.GameBalls, (Object[])GameBalls.values(), RESOURCE_DIR + "images/game/balls/{0}.png", "Loading Game Ball Resources", Manager.Type.Image);
         
         //load all menu images
         add(Type.MenuImage, (Object[])MenuImage.values(), RESOURCE_DIR + "images/menu/{0}.gif", "Loading Menu Image Resources", Manager.Type.Image);
@@ -159,6 +167,11 @@ public class Resources
         return getResources(Type.MenuAudio).getAudio(key);
     }
     
+    public Audio getGameAudio(final Object key)
+    {
+        return getResources(Type.GameAudio).getAudio(key);
+    }
+    
     /**
      * Stop all sound
      */
@@ -229,10 +242,10 @@ public class Resources
         everyResource = null;
     }
     
-    public Graphics draw(final Graphics graphics, final Rectangle screen)
+    public void draw(final Graphics graphics, final Rectangle screen)
     {
         if (!loading)
-            return graphics;
+            return;
         
         for (Object key : everyResource.keySet().toArray())
         {
@@ -241,12 +254,10 @@ public class Resources
             //if loading the resources is not complete yet, draw progress
             if (!resources.isComplete())
             {
+                //display progress
                 resources.render(graphics, screen);
-
-                return graphics;
+                return;
             }
         }
-        
-        return graphics;
     }
 }

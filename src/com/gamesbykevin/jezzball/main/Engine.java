@@ -162,6 +162,10 @@ public class Engine implements KeyListener, MouseMotionListener, MouseListener, 
     @Override
     public void render(Graphics graphics) throws Exception
     {
+        //store the original font if we haven't already
+        if (font == null)
+            font = graphics.getFont();
+        
         //if the resources are still loading
         if (resources.isLoading())
         {
@@ -170,6 +174,9 @@ public class Engine implements KeyListener, MouseMotionListener, MouseListener, 
         }
         else
         {
+            //set the appropriate game font
+            graphics.setFont(resources.getGameFont(Resources.GameFont.Dialog).deriveFont(18f));
+            
             //draw game elements
             renderGame((Graphics2D)graphics);
             
@@ -185,21 +192,11 @@ public class Engine implements KeyListener, MouseMotionListener, MouseListener, 
      */
     private void renderGame(Graphics2D graphics) throws Exception
     {
-        //store the original font if we haven't already
-        if (font == null)
-            font = graphics.getFont();
-        
-        //set the appropriate game font
-        graphics.setFont(resources.getGameFont(Resources.GameFont.Dialog).deriveFont(Font.PLAIN, 12));
-        
         //NOTE: DRAW MAIN GAME HERE
         if (manager != null)
         {
             manager.render(graphics);
         }
-        
-        //set the original font back so the menu will be rendered correctly
-        graphics.setFont(font);
     }
     
     /**

@@ -5,6 +5,7 @@ import com.gamesbykevin.framework.input.Mouse;
 
 import com.gamesbykevin.jezzball.balls.Ball;
 import com.gamesbykevin.jezzball.board.Board;
+import com.gamesbykevin.jezzball.main.Resources;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -31,8 +32,31 @@ public class Player extends Sprite
     //are we currently capturing
     private boolean capture = false;
     
-    //the speed to capture
-    private static final int[] CAPTURE_SPEED = {1, 2, 5};
+    //the number of lives per level
+    public static final int[] START_LIVES = {5, 10, 15, 20, 1, 3};
+    
+    //the speed at which we will capture
+    public enum CaptureSpeed
+    {
+        Medium(2.5),
+        Fast(5),
+        Slow(1);
+        
+        private final double speed;
+        
+        private CaptureSpeed(final double speed)
+        {
+            this.speed = speed;
+        }
+        
+        public double getValue()
+        {
+            return this.speed;
+        }
+    }
+    
+    //the capture speed
+    private double speed;
     
     //the location where we started capturing
     private Point start;
@@ -46,11 +70,8 @@ public class Player extends Sprite
     //the boundary that is the border we are capturing
     private Rectangle captureBoundary;
     
-    public Player(final int lives, final Image horizontal, final Image vertical)
+    public Player(final Image horizontal, final Image vertical)
     {
-        //the number of lives left
-        this.lives = lives;
-        
         //set the appropriate images
         this.horizontal = horizontal;
         this.vertical = vertical;
@@ -60,6 +81,11 @@ public class Player extends Sprite
         
         //set the appropriate image
         switchImage();
+    }
+    
+    public void setSpeed(final int index)
+    {
+        this.speed = CaptureSpeed.values()[index].getValue();
     }
     
     /**
@@ -86,6 +112,15 @@ public class Player extends Sprite
     public int getLives()
     {
         return this.lives;
+    }
+    
+    /**
+     * The index of the lives list we want to set
+     * @param index 
+     */
+    public void setLives(final int index)
+    {
+        this.lives = START_LIVES[index];
     }
     
     /**
@@ -129,7 +164,7 @@ public class Player extends Sprite
         }
     }
     
-    public void update(final Mouse mouse, final Board board, final List<Ball> balls)
+    public void update(final Mouse mouse, final Board board, final List<Ball> balls, final Resources resources)
     {
         //if we are capturing
         if (hasCapture())
@@ -164,8 +199,14 @@ public class Player extends Sprite
                 //both sides have reached the end
                 if (side1.x == tmp.x && side2.x == tmp.x + tmp.width)
                 {
+                    //we are no longer capturing
                     switchCapture();
+                    
+                    //we need to separate the boundaries
                     board.setBoundaries(start, false, balls);
+                    
+                    //play fix sound effect
+                    resources.getGameAudio(Resources.GameAudio.Fix).play();
                 }
             }
             
@@ -186,8 +227,14 @@ public class Player extends Sprite
                 //both sides have reached the end
                 if (side1.y == tmp.y && side2.y == tmp.y + tmp.height)
                 {
+                    //we are no longer capturing
                     switchCapture();
+                    
+                    //we need to separate the boundaries
                     board.setBoundaries(start, true, balls);
+                    
+                    //play fix sound effect
+                    resources.getGameAudio(Resources.GameAudio.Fix).play();
                 }
             }
         }
@@ -245,11 +292,11 @@ public class Player extends Sprite
                 
                 if (hasHorizontal())
                 {
-                    setVelocityX(CAPTURE_SPEED[1]);
+                    setVelocityX(speed);
                 }
                 else
                 {
-                    setVelocityY(CAPTURE_SPEED[1]);
+                    setVelocityY(speed);
                 }
             }
         }
@@ -294,15 +341,6 @@ public class Player extends Sprite
     
     public void render(Graphics graphics)
     {
-        //if capturing draw progress
-        if (hasCapture())
-        {
-            graphics.setColor(Color.WHITE);
-            graphics.fillRect(getCaptureBoundary().x, getCaptureBoundary().y, getCaptureBoundary().width, getCaptureBoundary().height);
-            graphics.setColor(Color.BLACK);
-            graphics.drawRect(getCaptureBoundary().x, getCaptureBoundary().y, getCaptureBoundary().width, getCaptureBoundary().height);
-        }
-        
         //offset coordinates
         super.setX(super.getX() - (super.getWidth()  / 2));
         super.setY(super.getY() - (super.getHeight() / 2));
@@ -313,5 +351,14 @@ public class Player extends Sprite
         //set coordinates back
         super.setX(super.getX() + (super.getWidth()  / 2));
         super.setY(super.getY() + (super.getHeight() / 2));
+        
+        //if capturing draw progress
+        if (hasCapture())
+        {
+            graphics.setColor(Color.WHITE);
+            graphics.fillRect(getCaptureBoundary().x, getCaptureBoundary().y, getCaptureBoundary().width, getCaptureBoundary().height);
+            graphics.setColor(Color.BLACK);
+            graphics.drawRect(getCaptureBoundary().x, getCaptureBoundary().y, getCaptureBoundary().width, getCaptureBoundary().height);
+        }
     }
 }

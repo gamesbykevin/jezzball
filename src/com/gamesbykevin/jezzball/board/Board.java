@@ -21,31 +21,18 @@ public final class Board extends Sprite
     //all of the boundaries on the board
     private final List<Rectangle> boundaries;
     
+    private static final double START_GOAL = 0.80;
+    
     //the portion we need to be complete before moving to the next level
-    private double goal;
+    private double goal = START_GOAL;
     
     //the progress towards the goal
     private double progress;
     
-    /**
-     * Create a new board with the intial size to be the parameter screen
-     * @param screen The size of the original container
-     * @param goal Percentage of the board we need in order to complete
-     */
-    public Board(final Rectangle screen, final double goal)
+    public Board()
     {
-        //set our goal so we know when the board has been finished
-        this.goal = goal;
-        
         //create the list of boundaries
         boundaries = new ArrayList<>();
-        
-        //add the entire board window as the inital boundary
-        boundaries.add(screen);
-        
-        //set location and dimensions for the background image
-        super.setLocation(screen.x, screen.y);
-        super.setDimensions(screen.width, screen.height);
     }
     
     /**
@@ -70,6 +57,20 @@ public final class Board extends Sprite
         progress = ((totalArea - area) / totalArea);
         
         return (progress >= goal);
+    }
+    
+    public double getGoal()
+    {
+        return this.goal;
+    }
+    
+    public double getProgress()
+    {
+        //call hasGoal() so the progress value is set
+        hasGoal();
+        
+        //return result
+        return this.progress;
     }
     
     public List<Rectangle> getBoundaries()
@@ -182,10 +183,53 @@ public final class Board extends Sprite
         }
     }
     
-    @Override
-    public void update()
+    /**
+     * Start a new board with the intial size to be the parameter screen
+     * @param screen The size of the original container
+     * @param goal Percentage of the board we need in order to complete
+     * @param balls The List of balls so we can ensure the goal isn't too high
+     */
+    public void reset(final Rectangle screen, final List<Ball> balls) throws Exception
     {
+        if (balls == null || balls.size() < 1)
+            throw new Exception("There needs to at least be 1 ball set in order to calculate consumed area");
         
+        //set goal
+        this.goal = START_GOAL;
+        
+        //reset the progress as well
+        progress = 0;
+        
+        //remove all existing elements
+        boundaries.clear();
+        
+        //add the entire board window as the inital boundary
+        boundaries.add(screen);
+        
+        //set location and dimensions for the background image
+        super.setLocation(screen.x, screen.y);
+        super.setDimensions(screen.width, screen.height);
+        
+        //area of the entire board
+        final double area = getWidth() * getHeight();
+        
+        //area covered by the balls that we will never be able to capture
+        double consumedArea = 0;
+        
+        //get the total area that we can't capture
+        for (Ball ball : balls)
+        {
+            consumedArea += (ball.getWidth() * ball.getHeight());
+        }
+        
+        //the percentage of space that is open
+        final double openRatio = ((area - consumedArea) / area);
+        
+        //if the goal is larger than the open space adjust accordingly
+        if (goal > openRatio)
+        {
+            this.goal = openRatio - .075;
+        }
     }
 
     /**
@@ -203,7 +247,7 @@ public final class Board extends Sprite
         
         if (height < super.getHeight())
         {
-            super.setY((getHeight() / 2) - (super.getImage().getHeight(null) / 2));
+            super.setY(y + (getHeight() / 2) - (super.getImage().getHeight(null) / 2));
             super.setWidth(getImage().getWidth(null));
             super.setHeight(getImage().getHeight(null));
         }
@@ -215,16 +259,20 @@ public final class Board extends Sprite
         super.setLocation(x, y);
         super.setDimensions(w, h);
         
-        //fill each boundary
-        for (Rectangle boundary : boundaries)
+        //if we haven't reached our goal yet, draw the boundaries
+        if (!hasGoal())
         {
-            //cover up boundaries in black
-            graphics.setColor(Color.BLACK);
-            graphics.fillRect(boundary.x, boundary.y, boundary.width, boundary.height);
-            
-            //outline in white
-            graphics.setColor(Color.WHITE);
-            graphics.drawRect(boundary.x, boundary.y, boundary.width, boundary.height);
+            //fill each boundary
+            for (Rectangle boundary : boundaries)
+            {
+                //cover up boundaries in black
+                graphics.setColor(Color.BLACK);
+                graphics.fillRect(boundary.x, boundary.y, boundary.width, boundary.height);
+
+                //outline in white
+                graphics.setColor(Color.WHITE);
+                graphics.drawRect(boundary.x, boundary.y, boundary.width, boundary.height);
+            }
         }
     }
 }

@@ -5,9 +5,13 @@ import com.gamesbykevin.framework.menu.Option;
 import com.gamesbykevin.framework.util.Timer;
 import com.gamesbykevin.framework.util.TimerCollection;
 
+import com.gamesbykevin.jezzball.balls.BallManager.*;
 import com.gamesbykevin.jezzball.main.Engine;
 import com.gamesbykevin.jezzball.main.Resources;
+import com.gamesbykevin.jezzball.manager.Manager;
 import com.gamesbykevin.jezzball.menu.CustomMenu;
+import com.gamesbykevin.jezzball.player.Player;
+import com.gamesbykevin.jezzball.player.Player.CaptureSpeed;
 
 public class Options extends Layer implements LayerRules
 {
@@ -30,6 +34,48 @@ public class Options extends Layer implements LayerRules
         //setup options here
         Option tmp;
         
+        tmp = new Option("Mode: ");
+        for (Manager.Mode mode : Manager.Mode.values())
+        {
+            tmp.add(mode.toString(), engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
+        }
+        super.add(CustomMenu.OptionKey.Mode, tmp);
+        
+        tmp = new Option("Ball Size: ");
+        for (BallSize size : BallSize.values())
+        {
+            tmp.add(size.toString(), engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
+        }
+        super.add(CustomMenu.OptionKey.BallSize, tmp);
+        
+        tmp = new Option("Ball Speed: ");
+        for (BallSpeed speed : BallSpeed.values())
+        {
+            tmp.add(speed.toString(), engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
+        }
+        super.add(CustomMenu.OptionKey.BallSpeed, tmp);
+        
+        tmp = new Option("Capture Speed: ");
+        for (CaptureSpeed speed : CaptureSpeed.values())
+        {
+            tmp.add(speed.toString(), engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
+        }
+        super.add(CustomMenu.OptionKey.CaptureSpeed, tmp);
+        
+        tmp = new Option("Lives Per Level: ");
+        for (Integer count : Player.START_LIVES)
+        {
+            tmp.add(count.toString(), engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
+        }
+        super.add(CustomMenu.OptionKey.Lives, tmp);
+        
+        tmp = new Option("Level Start: ");
+        for (Integer level : Manager.LEVEL_START)
+        {
+            tmp.add(level.toString(), engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
+        }
+        super.add(CustomMenu.OptionKey.LevelStart, tmp);
+
         tmp = new Option("Cheat: ");
         tmp.add("Off", engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));
         tmp.add("On",engine.getResources().getMenuAudio(Resources.MenuAudio.MenuChange));

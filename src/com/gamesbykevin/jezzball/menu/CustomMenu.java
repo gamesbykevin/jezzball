@@ -8,9 +8,7 @@ import com.gamesbykevin.jezzball.menu.layer.ExitGameConfirm;
 import com.gamesbykevin.jezzball.menu.layer.Options;
 import com.gamesbykevin.jezzball.menu.layer.OptionsInGame;
 import com.gamesbykevin.jezzball.menu.layer.Credits;
-import com.gamesbykevin.jezzball.menu.layer.Instructions3;
 import com.gamesbykevin.jezzball.menu.layer.StartGame;
-import com.gamesbykevin.jezzball.menu.layer.Controls2;
 import com.gamesbykevin.jezzball.menu.layer.NewGameConfirmed;
 import com.gamesbykevin.jezzball.menu.layer.MainTitle;
 import com.gamesbykevin.jezzball.menu.layer.Title;
@@ -43,16 +41,16 @@ public class CustomMenu extends Menu
     {
         Sound, FullScreen, StartGame, Options, Controls, Instructions, Credits, GoBack, Resume, 
         NewGame, ExitGame, NewGameConfim, NewGameDeny, ExitGameConfirm, ExitGameDeny, 
-        Cheat
+        Cheat, Mode, BallSpeed, BallSize, CaptureSpeed, Lives, LevelStart
     }
     
     //unique key to indentify each Layer
     public enum LayerKey 
     {
-        Title, Credits, MainTitle, Options, 
-        Controls1, Controls2, 
-        Instructions1, Instructions2, Instructions3, 
-        OptionsInGame, NewGameConfirm, ExitGameConfirm, NoFocus, StartGame, NewGameConfirmed
+        Title, Credits, MainTitle, Options, OptionsInGame, 
+        NewGameConfirm, ExitGameConfirm, NoFocus, StartGame, NewGameConfirmed, 
+        Controls1,  
+        Instructions1, Instructions2
     }
     
     //if index has a value it will be greater than -1
@@ -77,10 +75,8 @@ public class CustomMenu extends Menu
         super.add(LayerKey.MainTitle,       new MainTitle(engine));
         super.add(LayerKey.Options,         new Options(engine));
         super.add(LayerKey.Controls1,       new Controls1(engine));
-        super.add(LayerKey.Controls2,       new Controls2(engine));
         super.add(LayerKey.Instructions1,   new Instructions1(engine));
         super.add(LayerKey.Instructions2,   new Instructions2(engine));
-        super.add(LayerKey.Instructions3,   new Instructions3(engine));
         super.add(LayerKey.OptionsInGame,   new OptionsInGame(engine));
         super.add(LayerKey.NewGameConfirm,  new NewGameConfirm(engine));
         super.add(LayerKey.ExitGameConfirm, new ExitGameConfirm(engine));
